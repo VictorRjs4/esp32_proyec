@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Control de ESP32</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 50px;
+        }
+        h1 {
+            color: #333;
+        }
+        button {
+            padding: 10px 20px;
+            margin: 10px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        #sensor-value {
+            font-size: 24px;
+            color: #007BFF;
+        }
+    </style>
+</head>
+<body>
+    <h1>Control de ESP32 desde cualquier lugar</h1>
+    <p>Controla el LED y observa el valor del sensor en tiempo real.</p>
+    
+    <button onclick="toggleLED('on')">Encender LED</button>
+    <button onclick="toggleLED('off')">Apagar LED</button>
+    
+    <h2>Valor del Sensor:</h2>
+    <p id="sensor-value">Cargando...</p>
+
+    <script>
+        // URL pública del ESP32
+        const esp32IP = "http://<TU_URL_PUBLICA_O_IP>:<PUERTO>"; // Cambia esto con la URL pública del ESP32
+
+        // Función para encender o apagar el LED
+        function toggleLED(state) {
+            fetch(`${esp32IP}/${state}`)
+                .then(response => response.text())
+                .then(data => console.log("LED " + state + ": " + data))
+                .catch(error => console.error("Error:", error));
+        }
+
+        // Función para obtener el valor del sensor
+        function getSensorValue() {
+            fetch(`${esp32IP}/sensor`)
+                .then(response => response.text())
+                .then(value => {
+                    document.getElementById("sensor-value").innerText = value;
+                })
+                .catch(error => console.error("Error al obtener el valor del sensor:", error));
+        }
+
+        // Actualizar el valor del sensor cada 2 segundos
+        setInterval(getSensorValue, 2000);
+    </script>
+</body>
+</html>
